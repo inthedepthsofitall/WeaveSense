@@ -1,0 +1,58 @@
+/* General Navbar Styles */
+.navbar {
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent to blend with the background */
+    width: 100%; /* Full width */
+    height: auto; /* Adjust to content height */
+    padding: 10px 0; /* Add padding for spacing */
+    position: fixed; /* Stick to the top of the page */
+    top: 0;
+    left: 0;
+    z-index: 10; /* Ensure it stays above other elements */
+    text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow below the navbar */
+  }
+  
+  .navbar-container {
+    width: 100%;
+    max-width: 1200px; /* Limit width for better alignment */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-evenly; /* Space between tabs */
+    align-items: center;
+    font-size: 1.5rem; /* Larger font size */
+    color: #ffffff;
+  }
+  
+  /* Navigation Links */
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 20px; /* Add spacing between links */
+  }
+  
+  .navbar-links li a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .navbar-links li a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+    transform: scale(1.1); /* Slight scale-up on hover */
+  }
+  
+  /* Title Styles */
+  .navbar-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 10px;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.3); /* Subtle shadow for readability */
+  }
+  
+  
