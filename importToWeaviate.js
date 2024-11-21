@@ -12,7 +12,7 @@ const WEAVIATE_API_KEY = process.env.VITE_WEAVIATE_API_KEY;
 
 const uploadDataToWeaviate = async () => {
   const data = [];
-  const filePath = './data/realtor-data.zip.csv'; // Ensure this path matches your folder structure
+  const filePath = './data/realtor-data.zip.csv'; 
 
   fs.createReadStream(filePath)
     .pipe(csvParser())
@@ -21,7 +21,7 @@ const uploadDataToWeaviate = async () => {
         zip_code: row.zip_code?.trim(), // Remove leading/trailing spaces
         price: parseFloat(row.price) || null,
         bedrooms: parseInt(row.bedrooms) || null,
-        // Add other columns as needed
+      
       });
     })
     .on('end', async () => {
