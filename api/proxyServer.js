@@ -24,7 +24,8 @@ app.use(compression({ filter: (_req, _res) => true }));
 
 // Preprocess CSV data on server startup
 const preprocessData = () => {
-  fs.createReadStream('data/realtor-data.zip.csv')
+  //fs.createReadStream('data/realtor-data.zip.csv')
+  fs.createReadStream('public/realtor-data.zip.csv')
     .pipe(csvParser({ headers: ['status', 'bed', 'bath', 'acre_lot', 'city', 'state', 'zip_code', 'house_size', 'prev_sold_date', 'price'] }))
     .on('data', (row) => {
       const zipCode = row.zip_code?.trim();
