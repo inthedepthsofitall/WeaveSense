@@ -11,7 +11,7 @@ body {
 
 .app-container {
   width: 100%;
-  padding-top: 100px; /* Adjust padding to account for the navbar */
+  padding-top: 100px; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,7 +35,7 @@ body {
   font-size: 1.5rem;
   margin-bottom: 20px;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-  align-self: center; /* Center align the subtitle within the flex container */
+  align-self: center; 
 }
 
 .search-bar-container {
@@ -52,9 +52,9 @@ body {
   padding: 10px 15px;
   font-size: 1rem;
   border: none;
-  border-radius: 8px 0 0 8px; /* Rounded corners on the left */
+  border-radius: 8px 0 0 8px; 
   box-sizing: border-box;
-  max-width: 300px; /* Ensures input width aligns with button */
+  max-width: 300px;
 }
 
 .search-bar-container button {

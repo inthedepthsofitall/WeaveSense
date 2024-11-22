@@ -23,7 +23,9 @@ function App() {
       return;
     }
 
-    const backendUrl = `http://localhost:3001/all-zip-data?zip_code=${encodeURIComponent(trimmedQuery)}`;
+    // const backendUrl = `http://localhost:3001/all-zip-data?zip_code=${encodeURIComponent(trimmedQuery)}`; for local hosting only
+    const backendUrl = `https://weave-sense.vercel.app/api/all-zip-data?zip_code=${encodeURIComponent(trimmedQuery)}`;
+
     setIsLoading(true);
     setErrorMessage('');
 
