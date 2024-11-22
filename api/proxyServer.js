@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import axios from 'axios';
+import fs from 'fs';
+import csvParser from 'csv-parser';
 import compression from 'compression';
 
 dotenv.config();
 
 const app = express();
-const WEAVIATE_URL = process.env.WEAVIATE_URL;  // Weaviate URL for backend
-const WEAVIATE_API_KEY = process.env.WEAVIATE_API_KEY;  // Weaviate API Key for backend
+let zipData = {}; // To store preprocessed data
 
 // Enable JSON and URL-encoded parsing with appropriate size limits
 app.use(express.json({ limit: '50mb' }));
@@ -22,28 +22,50 @@ app.use(cors({ origin: 'https://weave-sense.vercel.app', credentials: true }));
 // Enable compression
 app.use(compression({ filter: (_req, _res) => true }));
 
-// Fetch data from Weaviate and pass to frontend
-app.get('/api/all-zip-data', async (req, res) => {
-  const { zip_code } = req.query; // Query parameter from the frontend
-  
-  try {
-    // Make a request to Weaviate using Axios
-    const response = await axios.get(`${WEAVIATE_URL}/v1/objects`, {
-      headers: {
-        'Authorization': `Bearer ${WEAVIATE_API_KEY}`,  // Auth with Weaviate API Key
-      },
-      params: {
-        zip_code: zip_code,  // Pass the zip code query parameter to Weaviate
-      },
-    });
+// Preprocess CSV data on server startup
+const preprocessData = () => {
+  fs.createReadStream('data/realtor-data.zip.csv')
+    .pipe(csvParser({ headers: ['status', 'bed', 'bath', 'acre_lot', 'city', 'state', 'zip_code', 'house_size', 'prev_sold_date', 'price'] }))
+    .on('data', (row) => {
+      const zipCode = row.zip_code?.trim();
+      const zipPrefix = zipCode ? zipCode.slice(0, 3) : null;
+      if (!zipCode) return;
+      if (!zipData[zipCode]) zipData[zipCode] = [];
+      zipData[zipCode].push({
+        price: parseFloat(row.price) || null,
+        bedrooms: parseInt(row.bed, 10) || null,
+        bathrooms: parseInt(row.bath, 10) || null,
+        zip_code: zipCode,
+        zip_prefix: zipPrefix,
+        city: row.city,
+        state: row.state?.trim(),
+        house_size: parseInt(row.house_size, 10) || null,
+      });
+    })
+    .on('end', () => {
+      console.log('CSV file successfully processed.');
+    })
+    .on('error', (err) => console.error('Error processing CSV:', err.message));
+};
 
-    // Send the data back to the frontend
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching data from Weaviate:', error.message);
-    res.status(500).json({ error: 'Failed to fetch data from Weaviate' });
-  }
+preprocessData();
+
+// Updated `/all-zip-data` Endpoint
+app.get('/api/all-zip-data', (req, res) => {
+  const { zip_code, zip_prefix, state, page = 1, limit = 10 } = req.query;
+  let results = Object.values(zipData).flat();
+
+  if (zip_code) results = results.filter(item => item.zip_code === zip_code.trim());
+  if (zip_prefix) results = results.filter(item => item.zip_prefix === zip_prefix.trim());
+  if (state) results = results.filter(item => item.state?.toLowerCase() === state.trim().toLowerCase());
+
+  if (results.length === 0) return res.status(404).json({ error: 'No data found for the specified criteria' });
+
+  const startIndex = (page - 1) * limit;
+  const paginatedResults = results.slice(startIndex, startIndex + limit);
+  res.json(paginatedResults);
 });
 
+// Vercel requires the export of the app
 export default app;
 
