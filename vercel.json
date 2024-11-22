@@ -14,11 +14,8 @@
       {
         "src": "/api/(.*)",
         "dest": "/api/proxyServer.js"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/src/$1"
       }
     ]
   }
+  
   
