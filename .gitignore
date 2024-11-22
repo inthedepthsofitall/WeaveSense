@@ -25,3 +25,4 @@ dist-ssr
 data/realtor-data.zip.csv
 
 .vercel
+.env.local
