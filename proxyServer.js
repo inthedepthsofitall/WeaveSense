@@ -20,7 +20,8 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 // Enable compression
 app.use(
   compression({
-    filter: (_req, _res) => true, // Apply compression for all responses
+    // eslint-disable-next-line no-unused-vars
+    filter: (_req, _res) => true, 
   })
 );
 
@@ -91,47 +92,49 @@ preprocessData(); // Run preprocessing when the server starts
 
 // Updated `/all-zip-data` Endpoint
 app.get('/all-zip-data', (req, res) => {
-  const { zip_code, zip_prefix, state, page = 1, limit = 10 } = req.query;
-
-  console.log('Received query params:', { zip_code, zip_prefix, state, page, limit });
-
-  let results = Object.values(zipData).flat(); // Flatten the data to process all ZIP codes
-  console.log('Initial data length:', results.length);
-
-  // Filter by ZIP code if specified
-  if (zip_code) {
-    console.log('Filtering for zip_code:', zip_code);
-    results = results.filter(item => item.zip_code === zip_code.trim());
-    console.log(`After zip_code filter: ${results.length} results found`);
-  }
-
-  // Filter by ZIP prefix if specified
-  if (zip_prefix) {
-    console.log('Filtering for zip_prefix:', zip_prefix);
-    results = results.filter(item => item.zip_prefix === zip_prefix.trim());
-    console.log(`After zip_prefix filter: ${results.length} results found`);
-  }
-
-  // Filter by state if specified
-  if (state) {
-    console.log('Filtering for state:', state);
-    results = results.filter(item => item.state?.toLowerCase() === state.trim().toLowerCase());
-    console.log(`After state filter: ${results.length} results found`);
-  }
-
-  // Handle empty results
-  if (results.length === 0) {
-    console.log('No matching data found for the query.');
-    return res.status(404).json({ error: 'No data found for the specified criteria' });
-  }
-
-  // Apply pagination
-  const startIndex = (page - 1) * limit;
-  const paginatedResults = results.slice(startIndex, startIndex + limit);
-
-  console.log(`Returning ${paginatedResults.length} results for page ${page} with limit ${limit}`);
-  res.json(paginatedResults);
-});
+    const { zip_code, zip_prefix, state, page = 1, limit = 10 } = req.query;
+  
+    console.log('Received query params:', { zip_code, zip_prefix, state, page, limit });
+  
+    let results = Object.values(zipData).flat(); // Flatten the data to process all ZIP codes
+    console.log('Initial data length:', results.length);
+  
+    // Filter by ZIP code if specified
+    if (zip_code) {
+      console.log('Filtering for zip_code:', zip_code);
+      results = results.filter(item => item.zip_code === zip_code.trim());
+      console.log(`After zip_code filter: ${results.length} results found`);
+    }
+  
+    // Filter by ZIP prefix if specified
+    if (zip_prefix) {
+      console.log('Filtering for zip_prefix:', zip_prefix);
+      results = results.filter(item => item.zip_prefix === zip_prefix.trim());
+      console.log(`After zip_prefix filter: ${results.length} results found`);
+    }
+  
+    // Filter by state if specified
+    if (state) {
+      console.log('Filtering for state:', state);
+      results = results.filter(item => item.state?.toLowerCase() === state.trim().toLowerCase());
+      console.log(`After state filter: ${results.length} results found`);
+    }
+  
+    // Handle empty results
+    if (results.length === 0) {
+      console.log('No matching data found for the query.');
+      return res.status(404).json({
+        error: `No data found for zip code: ${zip_code || 'not provided'}`,
+      });
+    }
+  
+    // Apply pagination
+    const startIndex = (page - 1) * limit;
+    const paginatedResults = results.slice(startIndex, startIndex + limit);
+  
+    console.log(`Returning ${paginatedResults.length} results for page ${page} with limit ${limit}`);
+    res.json(paginatedResults);
+  });
 
 // Root Route
 app.get('/', (req, res) => {
